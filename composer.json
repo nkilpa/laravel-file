@@ -1,0 +1,35 @@
+{
+  "name": "nikitakilpa/laravel-file",
+  "type": "library",
+  "require": {
+    "php": "^8.0.2",
+    "laravel/framework": "^9.0",
+    "nikitakilpa/laravel-core": "*",
+    "nikitakilpa/laravel-system-job": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "nikitakilpa\\File\\": "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "nikitakilpa\\File\\Providers\\FileServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../laravel-core"
+    },
+    {
+      "type": "path",
+      "url": "../laravel-system-job"
+    }
+  ]
+}
