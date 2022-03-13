@@ -3,8 +3,8 @@
 namespace nikitakilpa\File\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use nikitakilpa\SystemJob\Jobs\RandomNumberJob;
-use nikitakilpa\SystemJob\Jobs\RandomTextJob;
+use nikitakilpa\File\Jobs\RandomNumberJob;
+use nikitakilpa\File\Jobs\RandomTextJob;
 
 class FileServiceProvider extends ServiceProvider
 {
@@ -16,6 +16,6 @@ class FileServiceProvider extends ServiceProvider
 
     public function boot()
     {
-
+        $this->loadRoutesFrom(__DIR__ . '/../Routes/routes.php');
     }
 }
