@@ -3,6 +3,7 @@
 namespace nikitakilpa\File\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use nikitakilpa\Core\Controllers\BaseController;
 use nikitakilpa\SystemJob\Dto\SchedulerDto;
@@ -10,6 +11,8 @@ use nikitakilpa\SystemJob\Facades\SystemJobFacade;
 
 class FileController extends BaseController
 {
+    //private string $driver = 'mongodb';
+
     public function hello(): JsonResponse
     {
         return response()->json([
@@ -17,23 +20,43 @@ class FileController extends BaseController
         ]);
     }
 
-    public function addJob(): JsonResponse
+    public function addJob(Request $request): JsonResponse
     {
+        $driver = config('schedule.default');
+        if (!is_null($request->input('driver')))
+        {
+            $driver = $request->input('driver');
+        }
+
         $dto = new SchedulerDto();
         $dto->action = 'TEXT_RANDOM';
         $dto->scheduled_at = '2022-03-09 09:00:00';
         $dto->params = ['text' => Str::random(10)];
 
-        SystemJobFacade::scheduler('mongodb')->scheduled($dto);
+        $result = SystemJobFacade::scheduler($driver)->scheduled($dto);
+
+        if ($result)
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Задача создана'
+            ]);
+        }
 
         return response()->json([
-            'status' => 'ok',
-            'message' => 'Задача создана'
+            'status' => 'error',
+            'message' => 'Задача не создана'
         ]);
     }
 
-    public function addJobs(): JsonResponse
+    public function addJobs(Request $request): JsonResponse
     {
+        $driver = config('schedule.default');
+        if (!is_null($request->input('driver')))
+        {
+            $driver = $request->input('driver');
+        }
+
         $dto1 = new \nikitakilpa\SystemJob\Dto\SchedulerDto();
         $dto1->action = 'TEXT_RANDOM';
         $dto1->scheduled_at = '2022-03-09 09:00:00';
@@ -46,11 +69,19 @@ class FileController extends BaseController
 
         $items = [$dto1, $dto2];
 
-        SystemJobFacade::scheduler('mongodb')->scheduledBatch($items);
+        $result = SystemJobFacade::scheduler($driver)->scheduledBatch($items);
+
+        if ($result)
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Задачи созданы'
+            ]);
+        }
 
         return response()->json([
-            'status' => 'ok',
-            'message' => 'Задачи созданы'
+            'status' => 'error',
+            'message' => 'Задачи не созданы'
         ]);
     }
 }
