@@ -9,4 +9,6 @@ Route::prefix('file')->group(function () {
     Route::post('/add-job', [FileController::class, 'addJob']);
 
     Route::post('/add-jobs', [FileController::class, 'addJobs']);
+
+    Route::post('/add-message', [FileController::class, 'addMessage']);
 });

@@ -5,6 +5,7 @@ namespace nikitakilpa\File\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use NeedleProject\LaravelRabbitMq\PublisherInterface;
 use nikitakilpa\Core\Controllers\BaseController;
 use nikitakilpa\SystemJob\Dto\SchedulerDto;
 use nikitakilpa\SystemJob\Facades\SystemJobFacade;
@@ -82,6 +83,34 @@ class FileController extends BaseController
         return response()->json([
             'status' => 'error',
             'message' => 'Задачи не созданы'
+        ]);
+    }
+
+    public function addMessage(Request $request): JsonResponse
+    {
+        $driver = config('schedule.default');
+        if (!is_null($request->input('driver')))
+        {
+            $driver = $request->input('driver');
+        }
+
+        $dto = new SchedulerDto();
+        $dto->action = 'PUBLISH_MESSAGE';
+        $dto->scheduled_at = '2020-01-01 00:00:00';
+
+        $result = SystemJobFacade::scheduler($driver)->scheduled($dto);
+
+        if ($result)
+        {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Задача создана'
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Задача не создана'
         ]);
     }
 }
